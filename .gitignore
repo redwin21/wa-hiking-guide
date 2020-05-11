@@ -132,4 +132,4 @@ dmypy.json
 /data/*.json
 /data/*.csv
 */.ipynb_checkpoints/
-
+*.vscode/
