@@ -16,13 +16,14 @@ def main():
 
     # hikes_path = load_data('wta-parks-data.json')
     hikes_path = 'wta-parks-data.csv'
-    hikes = pd.read_csv(hikes_path, sep='\t')
+    hikes = pd.read_csv(hikes_path, sep='\t', index_col=0)
     # hike_pages_path = get_hike_pages(list(hikes.index), list(hikes['url']), max_pages=0)
     # hike_pages_path = fast_get_hike_pages(list(hikes.index), list(hikes['url']))
-    drive_data_path = get_drive_data(list(hikes.index), list(hikes['lat']), list(hikes['lon']))
+    # hikes = merge_pages(hikes_path)
+    get_drive_data(list(hikes.index), list(hikes['lat']), list(hikes['lon']))
+    clean_drive_data(hikes_path)
 
-
-    pass
+    return
 
 
 def load_data(filepath):
@@ -123,28 +124,33 @@ def get_drive_data(indices, lat, lon, wait_time=1.5):
     save_path = "drive-data.json"
     json.dump(json_util.dumps(collection.find()), open(save_path, "w"))
 
+    # mongoexport --collection=drive_data --db=wta --out=drive-data-mongo.json
+
     return save_path
 
-def clean_drive_data(filepath):
-    """ This function takes the json drive data and extracts teh driving time and distance
+def clean_drive_data(hikes_path):
+    """ This function takes the json drive data and extracts the driving time and distance
         and returns those arrays.
+        It also adds those arrays to the data frame.
 
         Parameters:
-            filepath: file path from json data to load
+            filepath: file path from hikes_data to load and add to
         
         Returns:
             drive_dist: np array of drive distances
             drive_time: np array of drive time
     """
 
-    data = json.load(filepath)
+    client = MongoClient('localhost', 27017)
+    db = client['wta']
+    collection = db['drive_data']
 
     drive_dist = []
     drive_time = []
 
-    for idx in range(len(drive_dist)):
+    for idx, page in enumerate(collection.find()):
 
-        soup = BeautifulSoup()
+        soup = BeautifulSoup(page['content'], 'html')
         drive_dist.append(soup.find('span',{'id': 'drvDistance'}).text)
         drive_time.append(soup.find('span',{'id': 'drvDuration'}).text)
 
@@ -168,6 +174,11 @@ def clean_drive_data(filepath):
         except:
             drive_dist[idx] = np.nan
             drive_time[idx] = np.nan
+
+    hikes = pd.read_csv(hikes_path, sep='\t', index_col=0)
+    hikes['drive_distance'] = drive_dist
+    hikes['drive_time'] = drive_time
+    hikes.to_csv(hikes_path, sep='\t')
 
     return np.array(drive_dist), np.array(drive_time)
 
@@ -221,6 +232,8 @@ def get_hike_pages(indices, urls, max_pages=10):
     save_path = "wta-hike-pages.json"
     json.dump(json_util.dumps(collection.find()), open(save_path, "w"))
 
+    # mongoexport --collection=hike_pages --db=wta --out=wta-hike-pages-mongo.json
+
     return save_path
 
 def fast_get_hike_pages(indices, urls):
@@ -252,20 +265,106 @@ def fast_get_hike_pages(indices, urls):
     save_path = "wta-hike-pages.json"
     json.dump(json_util.dumps(collection.find()), open(save_path, "w"))
 
+    # mongoexport --collection=hike_pages --db=wta --out=wta-hike-pages-mongo.json
+
     return save_path
 
 
-def merge_pages(hikes_path, drive_path, pages_path):
+def merge_pages(hikes_path):
+    """ This function parses and adds the pages information to the hikes data frame.
+        It then saves the data frame.
 
-    hikes = pd.read_csv(hikes_path, sep='\t')
+        Parameters:
+            hikes_path: file path to the hike csv data
 
-    # drive_dist, drive_time = clean_drive_data(drive_path)
-    # hikes['drive_distance'] = drive_dist
-    # hikes['drive_time'] = drive_time
+        Returns:
+            hikes: updated data frame
+            saves data frame to the same csv
+    """
 
+    hikes = pd.read_csv(hikes_path, sep='\t', index_col=0)
+
+    client = MongoClient('localhost', 27017)
+    db = client['wta']
+    pages_collection = db['hike_pages']
+
+    length, gain, highest_point, rating, votes, description, report_count, lat, lon = [],[],[],[],[],[],[],[],[]
+
+    for idx, page in enumerate(pages_collection.find()):
+
+        print("merge_pages", idx, hikes['url'][idx])
+        soup = BeautifulSoup(page['content'],'html')
+
+        try:
+            length_x = soup.find('div', {'id': 'distance'}).text
+            length_temp = float(re.findall(r"(\d+\.+\d)", length_x)[0])
+            length_mult = 2 if not length_x == None and 'one-way' in length_x else 1
+            length.append(length_temp*length_mult)
+        except:
+            length.append(np.nan)
+        
+        try:
+            gain.append(float(soup.find_all('div', {'class': 'hike-stat'})[2].find_all('span')[0].text))
+        except:
+            gain.append(np.nan)
+        
+        try:
+            highest_point.append(float(soup.find_all('div', {'class': 'hike-stat'})[2].find_all('span')[1].text))
+        except:
+            highest_point.append(np.nan)
+        
+        try:
+            rating.append(float(soup.find('div', {'class': 'current-rating'}).text.split()[0]))
+        except:
+            rating.append(np.nan)
+        
+        try:
+            votes.append(int(soup.find('div', {'class': 'rating-count'}).text.split()[0][1:]))
+        except:
+            votes.append(np.nan)
+        
+        try:
+            description.append(soup.find('div', {'id': 'hike-body-text'}).text)
+        except:
+            description.append('')
+        
+        try:
+            report_count.append(int(soup.find('span', {'class': 'ReportCount'}).text))
+        except:
+            report_count.append(np.nan)
+
+        try:
+            lat.append(float(soup.find('div', {'class': 'latlong'}).find_all('span')[0].text))
+            lon.append(float(soup.find('div', {'class': 'latlong'}).find_all('span')[1].text))
+        except:
+            lat.append(np.nan)
+            lon.append(np.nan)
+
+    hikes['length2'] = np.array(length)
+    hikes['gain2'] = np.array(gain)
+    hikes['highest_point2'] = np.array(highest_point)
+    hikes['lat2'] = np.array(lat)
+    hikes['lon2'] = np.array(lon)
+    hikes['rating'] = np.array(rating)
+    hikes['votes'] = np.array(votes)
+    hikes['reports'] = np.array(report_count)
+    hikes['description'] = np.array(description)
+
+    hikes['lat'] = np.nanmean(np.concatenate((hikes['lat'].values.reshape(-1,1),hikes['lat2'].values.reshape(-1,1)), axis=1), axis=1)
+    hikes['lon'] = np.nanmean(np.concatenate((hikes['lon'].values.reshape(-1,1),hikes['lon2'].values.reshape(-1,1)), axis=1), axis=1)
+    hikes['gain'] = np.nanmean(np.concatenate((hikes['gain'].values.reshape(-1,1),hikes['gain2'].values.reshape(-1,1)), axis=1), axis=1)
+    hikes['highest point'] = np.nanmean(np.concatenate((hikes['highest point'].values.reshape(-1,1),hikes['highest_point2'].values.reshape(-1,1)), axis=1), axis=1)
+    hikes['length'] = np.nanmean(np.concatenate((hikes['length'].values.reshape(-1,1),hikes['length2'].values.reshape(-1,1)), axis=1), axis=1)
     
+    hikes = hikes.drop(columns=['lat2','lon2','gain2','highest_point2','length2'])
 
+    hikes.to_csv(hikes_path, sep='\t')
+
+    return hikes
 
 
 if __name__ == '__main__':
+    """
+        Run main to scrape and clean all data and produce final csv.
+    """
     main()
