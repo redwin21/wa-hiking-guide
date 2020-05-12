@@ -13,7 +13,8 @@ def main():
     # from the WTA website.
 
     hikes = load_data('wta-parks-data.json')
-    get_hike_pages(list(hikes.index), list(hikes['url']))
+    # get_hike_pages(list(hikes.index), list(hikes['url']), max_pages=0)
+    fast_get_hike_pages(list(hikes.index), list(hikes['url']))
     get_distance('wta-parks-data.csv')
 
     pass
@@ -140,6 +141,7 @@ def get_hike_pages(indices, urls, max_pages=10):
         try:
             driver.get(url)
             collection.insert_one({"id": idx, "url": url, "page": k, "content": driver.page_source})
+            time.sleep(1)
 
             while k < max_pages:
                 k += 1
@@ -153,6 +155,23 @@ def get_hike_pages(indices, urls, max_pages=10):
             collection.insert_one({"id": idx, "url": url, "content": "None"})
 
         driver.quit()
+
+    json.dump(json_util.dumps(collection.find()), open("wta-hike-pages.json", "w"))
+
+    return
+
+def fast_get_hike_pages(indices, urls):
+
+    client = MongoClient('localhost', 27017)
+    db = client['wta']
+    collection = db['hike_pages']
+
+    for idx in indices:
+        url = urls[idx]
+        print("fast_get_hike_pages", idx, url)
+        r = requests.get(url)
+        collection.insert_one({"id": idx, "url": url, "content": r.content})
+        time.sleep(1)
 
     json.dump(json_util.dumps(collection.find()), open("wta-hike-pages.json", "w"))
 
