@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+from pymongo import MongoClient
+from bson import json_util 
 import json, re, requests, urllib, time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -11,11 +13,11 @@ def main():
     # from the WTA website.
 
     hikes = load_data('wta-parks-data.json')
-    dist, time = add_distance('wta-parks-data.csv')
-
-
+    get_hike_pages(list(hikes.index), list(hikes['url']))
+    get_distance('wta-parks-data.csv')
 
     pass
+
 
 def load_data(filepath):
     # This function loads the WTA json data, unpacks the mapped data and returns a table.
@@ -66,13 +68,14 @@ def load_data(filepath):
 
     return hikes
 
-def add_distance(filepath, wait_time=1):
+def get_distance(filepath, wait_time=1):
 
     hikes = pd.read_csv(filepath, sep='\t', index_col=0)
     drive_time = []
     drive_dist = []
 
     for idx in range(hikes.shape[0]):
+        print("get_distance", idx)
 
         chrome_options = Options()  
         chrome_options.add_argument("--headless")
@@ -120,32 +123,41 @@ def add_distance(filepath, wait_time=1):
     return np.array(drive_dist), np.array(drive_time)
 
 
-def get_hike_pages(urls):
+def get_hike_pages(indices, urls, max_pages=10):
 
-    # client = MongoClient('localhost', 27017)
-    # db = client['wta']
-    # collection = db['hike_pages']
+    client = MongoClient('localhost', 27017)
+    db = client['wta']
+    collection = db['hike_pages']
 
-    url = urls
+    for idx in indices:
+        url = urls[idx]
+        print("get_hike_pages", idx, url)
+        chrome_options = Options()  
+        chrome_options.add_argument("--headless")
+        driver = webdriver.Chrome(chrome_options=chrome_options)
 
-    chrome_options = Options()  
-    chrome_options.add_argument("--headless")
-    driver = webdriver.Chrome(chrome_options=chrome_options)
-
-    soups = []
-    driver.get(url)
-    soup = BeautifulSoup(driver.page_source, 'html')
-    soups.append(soup)
-
-    while True:
+        k = 0
         try:
-            driver.find_element_by_partial_link_text("Next 5 items").click()
-            time.sleep(1)
-            soup = BeautifulSoup(driver.page_source, 'html')
-            soups.append(soup)
+            driver.get(url)
+            collection.insert_one({"id": idx, "url": url, "page": k, "content": driver.page_source})
+
+            while k < max_pages:
+                k += 1
+                try:
+                    driver.find_element_by_partial_link_text("Next 5 items").click()
+                    time.sleep(1)
+                    collection.insert_one({"id": idx, "url": url, "page": k,  "content": driver.page_source})
+                except:
+                    break
         except:
-            break
+            collection.insert_one({"id": idx, "url": url, "content": "None"})
 
-    driver.quit()
+        driver.quit()
 
-    return soups
+    json.dump(json_util.dumps(collection.find()), open("wta-hike-pages.json", "w"))
+
+    return
+
+
+if __name__ == '__main__':
+    main()
