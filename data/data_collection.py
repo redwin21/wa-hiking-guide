@@ -1,13 +1,19 @@
 import pandas as pd
 import numpy as np
-import json, re, requests, urllib
+import json, re, requests, urllib, time
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
-import time
+
 
 def main():
     # When running this file, a script collects all of the necessary data
     # from the WTA website.
+
+    hikes = load_data('wta-parks-data.json')
+    dist, time = add_distance('wta-parks-data.csv')
+
+
 
     pass
 
@@ -60,38 +66,86 @@ def load_data(filepath):
 
     return hikes
 
-def add_distance(filepath):
+def add_distance(filepath, wait_time=1):
 
     hikes = pd.read_csv(filepath, sep='\t', index_col=0)
-    drive_time = np.full((hikes.shape[0],1), np.nan)
-    drive_dist = np.full((hikes.shape[0],1), np.nan)
+    drive_time = []
+    drive_dist = []
 
-    for idx in range(3):
-    # for idx in range(hikes.shape[0]):
+    for idx in range(hikes.shape[0]):
+
+        chrome_options = Options()  
+        chrome_options.add_argument("--headless")
+        driver = webdriver.Chrome(chrome_options=chrome_options)
+
         if not np.isnan(hikes['lat'][idx]):
             url = ("https://distancecalculator.globefeed.com/US_Distance_Result.asp?vr=apes&fromplace=Seattle,%20WA,%20USA&toplace="
                     + str(hikes['lat'][idx]) + "," + str(hikes['lon'][idx]) + ",US")
-            # r = requests.get(url)
 
-            driver = webdriver.Chrome(executable_path="~drivers/chromedriver.exe")
             driver.get(url)
-            time.sleep(10)
-
+            time.sleep(wait_time)
             soup = BeautifulSoup(driver.page_source, 'html')
-            drive_dist[idx] = soup.find('span',{'id': 'drvDistance'}).text
-            drive_time[idx] = soup.find('span',{'id': 'drvDuration'}).text
+            driver.close()
 
-    return drive_dist, drive_time
+            drive_dist.append(soup.find('span',{'id': 'drvDistance'}).text)
+            drive_time.append(soup.find('span',{'id': 'drvDuration'}).text)
+
+        else:
+            drive_dist.append('')
+            drive_time.append('')
+    
+    driver.quit()
+
+    for idx in range(len(drive_dist)):
+        if not drive_dist[idx] == '':
+            if drive_dist[idx] == 'Calculating...':
+                drive_dist[idx] = np.nan
+            else:
+                drive_dist[idx] = float(drive_dist[idx].split()[0])
+            
+            if drive_time[idx] == 'Calculating...':
+                drive_time[idx] = np.nan
+            elif len(drive_time[idx].split()) == 2:
+                drive_time[idx] = float(drive_time[idx].split()[0])
+            else:
+                drive_time[idx] = float(drive_time[idx].split()[0]) * 60 + float(drive_time[idx].split()[2])
+        
+        else:
+            drive_dist[idx] = np.nan
+            drive_time[idx] = np.nan
+
+    np.savetxt('drive_dist_array.txt', drive_dist)
+    np.savetxt('drive_time_array.txt', drive_time)
+
+    return np.array(drive_dist), np.array(drive_time)
 
 
-# def get_hike_pages(urls):
+def get_hike_pages(urls):
 
-#     client = MongoClient('localhost', 27017)
-#     db = client['wta']
-#     collection = db['hike_pages']
+    # client = MongoClient('localhost', 27017)
+    # db = client['wta']
+    # collection = db['hike_pages']
 
-#     for url in urls:
-#         r = requests.get(url)
-#         collection.insert_one({'url': url, 'route_stats_page': r.content})
+    url = urls
 
-# return collection
+    chrome_options = Options()  
+    chrome_options.add_argument("--headless")
+    driver = webdriver.Chrome(chrome_options=chrome_options)
+
+    soups = []
+    driver.get(url)
+    soup = BeautifulSoup(driver.page_source, 'html')
+    soups.append(soup)
+
+    while True:
+        try:
+            driver.find_element_by_partial_link_text("Next 5 items").click()
+            time.sleep(1)
+            soup = BeautifulSoup(driver.page_source, 'html')
+            soups.append(soup)
+        except:
+            break
+
+    driver.quit()
+
+    return soups

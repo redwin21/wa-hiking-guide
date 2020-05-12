@@ -133,3 +133,5 @@ dmypy.json
 /data/*.csv
 */.ipynb_checkpoints/
 *.vscode/
+/data/*.txt
+*.DS_Store
