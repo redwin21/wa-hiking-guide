@@ -62,3 +62,18 @@ dtypes: float64(27), int64(7), object(3)
 memory usage: 986.4+ KB
 ```
 
+The meanings of the features are the following:
+
+- length: hike length in miles
+- highest point: max elevation of the hike in feet
+- gain: elevation gain of the hike in feet
+- lat: latitude of the hike
+- lon: longitude of the hike
+- pass: each of these features is binary (1 = True, 0 = False) whether this parking pass is required
+- Dogs allowed on leash - Rivers: each of these features is binary (1 = True, 0 = False) whether this feature is present on this hike
+- rating: 0-5 star rating of the hike
+- votes: number of ratings for the hike
+- reports: number of trip reports written for the hike
+- description: text description of the hike
+- drive distance: miles required to drive from Seattle to the hike
+- drive time: minutes required to drive from Seattle to the hike
