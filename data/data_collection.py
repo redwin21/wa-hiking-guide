@@ -12,14 +12,16 @@ def main():
     """
     When running this file, a script collects all of the necessary data from the WTA website.
     All of the necessary data files are cleaned and saved.
+
+    A MongoDB Docker container must be initiated on port 27017.
     """
 
-    # hikes_path = load_data('wta-parks-data.json')
-    hikes_path = 'wta-parks-data.csv'
+    hikes_path = load_data('wta-parks-data.json')
+    
     hikes = pd.read_csv(hikes_path, sep='\t', index_col=0)
-    # hike_pages_path = get_hike_pages(list(hikes.index), list(hikes['url']), max_pages=0)
-    # hike_pages_path = fast_get_hike_pages(list(hikes.index), list(hikes['url']))
-    # hikes = merge_pages(hikes_path)
+    # get_hike_pages(list(hikes.index), list(hikes['url']), max_pages=0)
+    fast_get_hike_pages(list(hikes.index), list(hikes['url']))
+    hikes = merge_pages(hikes_path)
     get_drive_data(list(hikes.index), list(hikes['lat']), list(hikes['lon']))
     clean_drive_data(hikes_path)
 
@@ -145,42 +147,44 @@ def clean_drive_data(hikes_path):
     db = client['wta']
     collection = db['drive_data']
 
-    drive_dist = []
-    drive_time = []
+    hikes = pd.read_csv(hikes_path, sep='\t', index_col=0)
+    drive_dist = np.full(shape=(hikes.shape[0],1), fill_value=np.nan)
+    drive_time = np.full(shape=(hikes.shape[0],1), fill_value=np.nan)
 
     for idx, page in enumerate(collection.find()):
 
+        print("clean_drive_data", idx)
+
         soup = BeautifulSoup(page['content'], 'html')
-        drive_dist.append(soup.find('span',{'id': 'drvDistance'}).text)
-        drive_time.append(soup.find('span',{'id': 'drvDuration'}).text)
+        dist = soup.find('span',{'id': 'drvDistance'})
+        tim = soup.find('span',{'id': 'drvDuration'})
 
         try:
-            if not drive_dist[idx] == '':
-                if drive_dist[idx] == 'Calculating...':
-                    drive_dist[idx] = np.nan
-                else:
-                    drive_dist[idx] = float(drive_dist[idx].split()[0])
-                
-                if drive_time[idx] == 'Calculating...':
-                    drive_time[idx] = np.nan
-                elif len(drive_time[idx].split()) == 2:
-                    drive_time[idx] = float(drive_time[idx].split()[0])
-                else:
-                    drive_time[idx] = float(drive_time[idx].split()[0]) * 60 + float(drive_time[idx].split()[2])
-            
-            else:
+            dist = dist.text
+            tim = tim.text
+
+            if dist == 'Calculating...':
                 drive_dist[idx] = np.nan
+            else:
+                drive_dist[idx] = float(dist.split()[0])
+            
+            if tim == 'Calculating...':
                 drive_time[idx] = np.nan
+            elif len(tim.split()) == 2:
+                drive_time[idx] = float(time.split()[0])
+            else:
+                drive_time[idx] = float(tim.split()[0]) * 60 + float(tim.split()[2])
+            
         except:
             drive_dist[idx] = np.nan
             drive_time[idx] = np.nan
 
-    hikes = pd.read_csv(hikes_path, sep='\t', index_col=0)
-    hikes['drive_distance'] = drive_dist
-    hikes['drive_time'] = drive_time
+    
+    hikes['drive distance'] = drive_dist
+    hikes['drive time'] = drive_time
     hikes.to_csv(hikes_path, sep='\t')
 
-    return np.array(drive_dist), np.array(drive_time)
+    return drive_dist, drive_time
 
 
 def get_hike_pages(indices, urls, max_pages=10):

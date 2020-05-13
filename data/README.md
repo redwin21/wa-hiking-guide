@@ -56,8 +56,8 @@ Data columns (total 37 columns):
  29  votes                                                      3251 non-null   float64
  30  reports                                                    3251 non-null   float64
  31  description                                                3251 non-null   object 
- 32  drive distance                                             2519 non-null   float64
- 33  drive time                                                 2519 non-null   float64
+ 32  drive distance                                             2031 non-null   float64
+ 33  drive time                                                 2031 non-null   float64
 dtypes: float64(27), int64(7), object(3)
 memory usage: 986.4+ KB
 ```
