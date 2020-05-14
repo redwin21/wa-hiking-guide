@@ -37,7 +37,7 @@ Data columns (total 37 columns):
  10  pass: None                                                 3412 non-null   int64  
  11  pass: Northwest Forest Pass                                3412 non-null   int64  
  12  pass: Sno-Parks Permit                                     3412 non-null   int64  
- 13  pass: Wilderness permit. Self-issue at trailhead (no fee)  3412 non-null   int64  
+ 13  pass: Wilderness Permit                                    3412 non-null   int64  
  14  Wildflowers/Meadows                                        3412 non-null   float64
  15  Dogs allowed on leash                                      3412 non-null   float64
  16  Good for kids                                              3412 non-null   float64
