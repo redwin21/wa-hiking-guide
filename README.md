@@ -21,16 +21,18 @@ With the hiking community so large in the Pacific Northwest, there's a strong ma
 
 With hiking being so popular, there are constants efforts made to build new trails, maintain current trails, and rescue estranged hikers who lose their way. Information on why a hike is so popular can help focus resources to the best locations. It can also be used for developing new hikes in places outside of Washington.
 
-The following models, and overall study, are meant to provide insight into what makes a hike so popular. Feature importance can be extracted from models that make predictions on popularity quanitities to make draw these insights.
+The following models, and overall study, are meant to provide insight into what makes a hike so popular. Feature importance can be extracted from models that make predictions on popularity quanitities to draw these insights.
 
 ---
 
 ## Table of Contents
 
-- <a href="https://github.com/redwin21/wa-hiking-guide#data-collection-and-processing">Data Collection and Processing</a>
+- <a href="https://github.com/redwin21/wa-hiking-guide#hiking-data-collection-and-cleaning">Hiking Data Collection and Cleaning</a>
 - <a href="https://github.com/redwin21/wa-hiking-guide#hike-description-language-processing">Hike Description Language Processing</a>  
-- <a href="https://github.com/redwin21/wa-hiking-guide#ridge-regression-model">Ridge Regression Model</a> 
-- <a href="https://github.com/redwin21/wa-hiking-guide#gradient-boosting-regression-model">Gradient Boosting Regression Model</a>  
+- <a href="https://github.com/redwin21/wa-hiking-guide#models">Models</a> 
+    - <a href="https://github.com/redwin21/wa-hiking-guide#linear-regression-model">Linear Regression Model</a> 
+    - <a href="https://github.com/redwin21/wa-hiking-guide#ridge-regression-model">Ridge Regression Model</a> 
+    - <a href="https://github.com/redwin21/wa-hiking-guide#gradient-boosting-regression-model">Gradient Boosting Regression Model</a>  
 - <a href="https://github.com/redwin21/wa-hiking-guide#results">Results</a>  
 - <a href="https://github.com/redwin21/wa-hiking-guide#next-steps">Next Steps</a>  
 
@@ -38,7 +40,7 @@ The following models, and overall study, are meant to provide insight into what 
 
 ## Data Collection and Processing
 
-## Hiking Data Collection and Cleaning Process
+## Hiking Data Collection and Cleaning
 
 The data for this project is collected from [Washington Trails Association](https://www.wta.org/) (WTA), a database for hikes and trip reports in Washington state.
 
@@ -112,6 +114,8 @@ The meanings of the features are the following:
 - drive time: minutes required to drive from Seattle to the hike
 </details>
 
+Two features of the data were identified as being related to popularity. These are `reports` and `rating`. Reports is a number that indicates how many trip reports have been written for a hike, related to how frequently a hike is visited. Rating is a 0-5 number that indicates hikers' favorability of the hike based on an aggregate of votes from the website's users. These two features are the focus of the machine learning predictions.
+
 ---
 
 ## Hike Description Language Processing
@@ -130,22 +134,66 @@ In just two clusters, and with a little bit of domain knowledge, one can clearly
 
  In this case, the first one refers to technical hiking, indicated by words like "climbing", "expertise", "gear", etc. The other cluster seems to lump together everything else.
 
- All number of clusters for K-Means and factors for NMF provided similar results, where one category clearly identified techncial hiking, and the others were not distinguishable. Silhouette graphs of two different clusterings show this effect (with silhouette score being a measure of how appropriately grouped a data point is within a cluster). One cluster (the "technical" grouping) has a high positive score, meaning the data point is close to the center of the cluster, while all other clustered data points are negative.
+ All number of clusters for K-Means and factors for NMF provided similar results, where one category clearly identified techncial hiking, and the others were not distinguishable. Silhouette graphs of two different clusterings show this effect (with silhouette score being a measure of how appropriately grouped a data point is within a cluster). One cluster (the "technical" grouping) has a high positive score, meaning the data point is close to the center of the cluster, while all other clustered data points are negative. Five clusters for the second graph was arbitrarily chosen to highlight the affect.
 
-<details>
+
 <summary> Silhouette Graphs </summary>
 <p align="center">
 <img align="center" width="500" src="images/text_cluster_silhouette.png">
 </p>
-</details>
+
 
 This latent feature in the text was added to the data frame as a new feature called `technical`, hopefully to add additional insights to the predictions.
 
 Here is a plot of hikes on a map of Washington by location, distinguished by whether they are "technical" or not, as determined by the natural language processing.
 
 <p align="center">
-<img align="center" width="500" src="images/wa_map_scatter.png">
+<img align="center" width="800" src="images/wa_map_scatter.png">
 </p>
+
+---
+
+## Models
+
+Three models were considered in making predictions of reports and rating: an ordinary least squares linear regression, a ridge regression, and a gradient boosting regression.
+
+---
+
+### Linear Regression Model
+
+An ordinary least squares linear regression model was used to attempt to predict hike reports and rating features. The model was built with the `statsmodels` python library. The goal of the model was to extrect feature coefficients to gain some insight into which are important for the model. Most importanly, identifying the sign and p-value of the coefficients would identify which features were effective in the model and for which direction.
+
+This table summarizes the coefficients and p-values from the models for the prediction of reports and rating, respectively.
+
+| feature                     | reports coef | reports p-value | rating coef | rating p-value |
+|-----------------------------|--------------|-----------------|-------------|----------------|
+| length                      | -2.5306      | 0.000           | -0.0068     | 0.189          |
+| highest point               | 0.0026       | 0.358           | 0.0004      | 0.000          |
+| gain                        | 0.0166       | 0.002           | 4.408e-05   | 0.264          |
+| pass: Discover Pass         | -12.1523     | 0.510           | 0.6403      | 0.000          |
+| pass: National Monument Fee | 157.6036     | 0.226           | 0.0974      | 0.921          |
+| pass: National Park Pass    | -8.1689      | 0.692           | 0.2422      | 0.120          |
+| pass: Northwest Forest Pass | 44.2028      | 0.000           | 0.1432      | 0.129          |
+| pass: Sno-Parks Permit      | -52.6537     | 0.165           | -0.2988     | 0.296          |
+| pass: Wilderness Permit     | -79.4980     | 0.665           | -0.1061     | 0.939          |
+| Wildflowers/Meadows         | 20.4010      | 0.084           | 0.2393      | 0.007          |
+| Dogs allowed on leash       | 14.0731      | 0.247           | 0.1298      | 0.157          |
+| Good for kids               | 44.0796      | 0.001           | 0.9019      | 0.000          |
+| Lakes                       | 49.0096      | 0.000           | 0.3407      | 0.000          |
+| Fall foliage                | 21.3554      | 0.152           | -0.0167     | 0.882          |
+| Coast                       | 39.6841      | 0.137           | 1.7666      | 0.000          |
+| Mountain views              | 46.7921      | 0.000           | 0.2181      | 0.020          |
+| Wildlife                    | -12.1101     | 0.307           | 0.2309      | 0.010          |
+| Old growth                  | 21.0239      | 0.094           | 0.3401      | 0.000          |
+| Summits                     | 35.6294      | 0.018           | 0.1096      | 0.333          |
+| Ridges/passes               | -7.3388      | 0.606           | -0.1032     | 0.337          |
+| Established campsites       | 30.2489      | 0.032           | -0.1050     | 0.323          |
+| Waterfalls                  | 134.2133     | 0.000           | 0.5784      | 0.000          |
+| Rivers                      | 12.3975      | 0.323           | 0.5532      | 0.000          |
+| drive time                  | -0.0765      | 0.003           | 0.0008      | 0.000          |
+| technical                   | -5.7098      | 0.834           | -0.6192     | 0.003          |
+
+This model identifies that some features are more important than others via the magnitude of the coefficients. More importantly, the sign of the coefficients indicates teh direction of their effect. For instance, waterfalls on a hike have a large positive affect, while certian parking passes and the hike being technical make a hiker less likely to travel there.
 
 ---
 
