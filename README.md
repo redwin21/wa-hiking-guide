@@ -120,22 +120,32 @@ Among the data collected from WTA was the hike description, which provided a sou
 
 First, the text was vectorized, removing stopwords and creating term frequency matrices. Two processes approaches were taken to attempt to extract information from the text. A non-negative matrix factorization (NMF) was used to determine the most important latent features, and identify the associated words. Similarly, a K-Means clustering was done to group similar words and hikes together. Both produced similar results.
 
-In just two clusters, and with a little bit of domain knowledge, one can clearly distinguish the difference in the two clusters:
+In just two clusters, and with a little bit of domain knowledge, one can clearly distinguish the different features in the text:
 
 ```
 ['required' 'trail' 'gear' 'experience' 'park' 'peak' 'area' 'scramble' 'summit' 'expertise' 'finding' 'route' 'trails' 'mountain' 'climbing']
+
 ['trail' 'lake' 'creek' 'miles' 'mile' 'road' 'hike' 'mountain' 'forest' 'views' 'river' 'ridge' 'feet' 'way' 'trailhead']
  ```
 
  In this case, the first one refers to technical hiking, indicated by words like "climbing", "expertise", "gear", etc. The other cluster seems to lump together everything else.
 
- All number of clusters for K-Means and factors for NMF provided similar results, where one category clearly identified techncial hiking, and the others were not distinguishable. A silhouette graph of two different clusterings shows
+ All number of clusters for K-Means and factors for NMF provided similar results, where one category clearly identified techncial hiking, and the others were not distinguishable. Silhouette graphs of two different clusterings show this effect (with silhouette score being a measure of how appropriately grouped a data point is within a cluster). One cluster (the "technical" grouping) has a high positive score, meaning the data point is close to the center of the cluster, while all other clustered data points are negative.
 
 <details>
-<summary> Title </summary>
-
-test
+<summary> Silhouette Graphs </summary>
+<p align="center">
+<img align="center" width="500" src="images/text_cluster_silhouette.png">
+</p>
 </details>
+
+This latent feature in the text was added to the data frame as a new feature called `technical`, hopefully to add additional insights to the predictions.
+
+Here is a plot of hikes on a map of Washington by location, distinguished by whether they are "technical" or not, as determined by the natural language processing.
+
+<p align="center">
+<img align="center" width="500" src="images/wa_map_scatter.png">
+</p>
 
 ---
 
