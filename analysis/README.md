@@ -11,3 +11,5 @@ The analysis of the data was done in the following steps:
 4. A Gradient Boosting Resgression model was used to predict the rating and reports features in the `gbr_model.ipynb` file.
 
 Details on the results and conclusions can be seen in the main repository `README.md`.
+
+The `silhouette_graphs.py` file provides a helper function for creating the silhouette plots in the NLP notebook.
