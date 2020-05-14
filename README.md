@@ -1,4 +1,11 @@
 # Washington Hiking Popularity
+![badge](https://img.shields.io/badge/last%20modified-may%20%202020-success)
+![badge](https://img.shields.io/badge/status-in%20progress-yellow)
+
+<a href="https://github.com/redwin21">Eddie Ressegue</a>
+
+---
+
 Seattlites pride themselves on their outdoor excursions. You'd be hard-pressed to find someone who didn't enjoy hiking. Washington Trails Association provides a [website](wta.org) for people to find information on hikes and discover new ones.
 
 With the hiking community so large in the Pacific Northwest, there's a strong market for outdoor sports gear. Imagine being a gear retailer, trying to find out how to target new customers, update products and create new ones.
@@ -7,15 +14,60 @@ With hiking being so popular, there are constants efforts made to build new trai
 
 The following models, and overall study, are meant to provide insight into what makes a hike so popular. Feature importance can be extracted from models that make predictions on popularity quanitities to make draw these insights.
 
+---
+
+## Table of Contents
+
+- <a href="https://github.com/redwin21/wa-hiking-guide#data-collection-and-processing">Data Collection and Processing</a>
+- <a href="https://github.com/redwin21/wa-hiking-guide#hike-description-language-processing">Hike Description Language Processing</a>  
+- <a href="https://github.com/redwin21/wa-hiking-guide#ridge">Ridge Regression Model</a>  
+
+
+---
+
 ## Data Collection and Processing
+
+<details>
+<summary> Title </summary>
+
+test
+</details>
+
+---
 
 ## Hike Description Language Processing
 
+<details>
+<summary> Title </summary>
+
+test
+</details>
+
+---
+
 ## Ridge Regression Model
+
+<details>
+<summary> Title </summary>
+
+test
+</details>
+
+---
 
 ## Gradient Boosting Regression Model
 
+<details>
+<summary> Title </summary>
+
+test
+</details>
+
+---
+
 ## Results
+
+---
 
 ## Next Steps
 
