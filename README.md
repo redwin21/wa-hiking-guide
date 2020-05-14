@@ -1,8 +1,19 @@
-# Washington Hiking Popularity
-![badge](https://img.shields.io/badge/last%20modified-may%20%202020-success)
-![badge](https://img.shields.io/badge/status-in%20progress-yellow)
+<img src='images/enchantments2.JPG'>
 
+<header align="center">
+Washington Hiking Popularity
+</header>
+
+<p align="center">
+<img align="center" src="https://img.shields.io/badge/last%20modified-may%20%202020-success">
+|
+<img align="center" src="https://img.shields.io/badge/status-in%20progress-yellow">
+</p>
+
+<div align="center">
 <a href="https://github.com/redwin21">Eddie Ressegue</a>
+</div>
+
 
 ---
 
@@ -20,8 +31,10 @@ The following models, and overall study, are meant to provide insight into what 
 
 - <a href="https://github.com/redwin21/wa-hiking-guide#data-collection-and-processing">Data Collection and Processing</a>
 - <a href="https://github.com/redwin21/wa-hiking-guide#hike-description-language-processing">Hike Description Language Processing</a>  
-- <a href="https://github.com/redwin21/wa-hiking-guide#ridge">Ridge Regression Model</a>  
-
+- <a href="https://github.com/redwin21/wa-hiking-guide#ridge-regression-model">Ridge Regression Model</a> 
+- <a href="https://github.com/redwin21/wa-hiking-guide#gradient-boosting-regression-model">Gradient Boosting Regression Model</a>  
+- <a href="https://github.com/redwin21/wa-hiking-guide#results">Results</a>  
+- <a href="https://github.com/redwin21/wa-hiking-guide#next-steps">Next Steps</a>  
 
 ---
 
@@ -76,3 +89,7 @@ With updates to the data and soem additional analysis, a next step for this proj
 - draw overall insights from all previous trip reports to include user sentiment about a hike and determine the best times of year
 - pull the latest trip reports and perform sentiment analysis to determine if hiking conditions are currently good
 - draw on the current weather forecast to determine if the weather will be appropriate at a given hike
+
+---
+
+<img src='images/enchantments.JPG'>
