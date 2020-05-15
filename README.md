@@ -42,6 +42,10 @@ The following models, and overall study, are meant to provide insight into what 
 
 The data for this project is collected from [Washington Trails Association](https://www.wta.org/) (WTA), a database for hikes and trip reports in Washington state.
 
+<p align="center">
+<img align="center" width="600" src="images/wta.png">
+</p>
+
 A dataset of all of the hikes on the website, as well as urls to those hikes, can be found in a [data.world](https://data.world/nick-hassell/washington-state-hiking-trails) database. This dataset provided a prelimiary set of data, as well as an easy way to access all of the hike web pages.
 
 The data was collected by visiting each of the urls in the original dataframe and scraping the html. More details can be found in the [data](https://github.com/redwin21/wa-hiking-guide/tree/master/data) folder.
@@ -167,57 +171,87 @@ As a baseline point of comparison, the average and standard deviation for the re
 
 An ordinary least squares linear regression model was used to attempt to predict hike reports and rating features. The model was built with the `statsmodels` python library. The goal of the model was to extrect feature coefficients to gain some insight into which are important for the model. Most importanly, identifying the sign and p-value of the coefficients would identify which features were effective in the model and for which direction.
 
-This table summarizes the coefficients and p-values from the models for the prediction of reports and rating, respectively.
+This plot summarizes the coefficients with p-values less tahn 0.05 from the models for the prediction of reports and rating.
 
-| feature                     | reports coef | reports p-value | rating coef | rating p-value |
-|-----------------------------|--------------|-----------------|-------------|----------------|
-| length                      | -2.5306      | 0.000           | -0.0068     | 0.189          |
-| highest point               | 0.0026       | 0.358           | 0.0004      | 0.000          |
-| gain                        | 0.0166       | 0.002           | 4.408e-05   | 0.264          |
-| pass: Discover Pass         | -12.1523     | 0.510           | 0.6403      | 0.000          |
-| pass: National Monument Fee | 157.6036     | 0.226           | 0.0974      | 0.921          |
-| pass: National Park Pass    | -8.1689      | 0.692           | 0.2422      | 0.120          |
-| pass: Northwest Forest Pass | 44.2028      | 0.000           | 0.1432      | 0.129          |
-| pass: Sno-Parks Permit      | -52.6537     | 0.165           | -0.2988     | 0.296          |
-| pass: Wilderness Permit     | -79.4980     | 0.665           | -0.1061     | 0.939          |
-| Wildflowers/Meadows         | 20.4010      | 0.084           | 0.2393      | 0.007          |
-| Dogs allowed on leash       | 14.0731      | 0.247           | 0.1298      | 0.157          |
-| Good for kids               | 44.0796      | 0.001           | 0.9019      | 0.000          |
-| Lakes                       | 49.0096      | 0.000           | 0.3407      | 0.000          |
-| Fall foliage                | 21.3554      | 0.152           | -0.0167     | 0.882          |
-| Coast                       | 39.6841      | 0.137           | 1.7666      | 0.000          |
-| Mountain views              | 46.7921      | 0.000           | 0.2181      | 0.020          |
-| Wildlife                    | -12.1101     | 0.307           | 0.2309      | 0.010          |
-| Old growth                  | 21.0239      | 0.094           | 0.3401      | 0.000          |
-| Summits                     | 35.6294      | 0.018           | 0.1096      | 0.333          |
-| Ridges/passes               | -7.3388      | 0.606           | -0.1032     | 0.337          |
-| Established campsites       | 30.2489      | 0.032           | -0.1050     | 0.323          |
-| Waterfalls                  | 134.2133     | 0.000           | 0.5784      | 0.000          |
-| Rivers                      | 12.3975      | 0.323           | 0.5532      | 0.000          |
-| drive time                  | -0.0765      | 0.003           | 0.0008      | 0.000          |
-| technical                   | -5.7098      | 0.834           | -0.6192     | 0.003          |
+<p align="center">
+<img align="center" width="600" src="images/ols_coefs_bar.png">
+</p>
 
-This model identifies that some features are more important than others via the magnitude of the coefficients. More importantly, the sign of the coefficients indicates teh direction of their effect. For instance, waterfalls on a hike have a large positive affect, while certian parking passes and the hike being technical make a hiker less likely to travel there.
+This model identifies that some features are more important than others via the magnitude of the coefficients. More importantly, the sign of the coefficients indicates the direction of their effect. For instance, waterfalls on a hike have a large positive affect, while certian parking passes and the hike being technical make a hiker less likely to travel there.
 
 ---
 
 ### Ridge Regression Model
 
-<details>
-<summary> Title </summary>
+The ridge regression model was built to normalize the scale of the coefficients in the linear regression to get a better sens of their relative magnitude. This regression used a standard scaler in a pipeline, so the output coefficients are listed relative to each other.
 
-test
+<details>
+<summary>By optimizing the alpha hyperparameter for the model of reports and rating we can glean a better understanding of feature importance with regularized coefficients.</summary>
+
+The ridge regression adds a correction factor called `alpha` to the linear regression to avoid one coefficient overpowering the other. The features must be normalized to remove the effect of scale. Here are the alpha optimizations for each model.
+
+<p align="center">
+<img align="center" width="600" src="images/reports_ridge_beta_vs_alpha.png">
+</p> 
+
+<p align="center">
+<img align="center" width="500" src="images/reports_ridge_rmse.png">
+</p>
+
+<p align="center">
+<img align="center" width="600" src="images/rating_ridge_beta_vs_alpha.png">
+</p>
+
+<p align="center">
+<img align="center" width="500" src="images/rating_ridge_rmse.png">
+</p>
+
 </details>
+
+The ridge regression models provided more insight into what features of a hike lead to the hike being more or less popular. This plot shows that the feature coefficients from modeling rating and reports generally produce the same results. The scale of the coefficients in this plot are arbitrarily scaled for visibility.
+
+<p align="center">
+<img align="center" width="600" src="images/ridge_coefs_bar.png">
+</p>
+
+The ridge regression model error results are the following:
+
+| feature | baseline standard deviation | average root mean squared error |
+|---------|-----------------------------|---------------------------------|
+| reports | 204                         | 152                             |
+| rating  | 1.19                        | 1.09                            |
 
 ---
 
 ### Gradient Boosting Regression Model
 
-<details>
-<summary> Title </summary>
+The idea behind the gradient boosting model is to see if there could be improvement by accounting for the nonlinearity of the data. The pitfall of this model is that while it can identify feature importance, it can't identify whether a feature has a positive or negative outcome on the prediction.
 
-test
+<details>
+<summary> The model hyperparameters were optimized by doing a simple grid search of varying parameters. </summary>
+
+<p align="center">
+<img align="center" width="500" src="images/reports_gbr_opt.png">
+</p> 
+
+<p align="center">
+<img align="center" width="500" src="images/rating_gbr_opt.png">
+</p>
+
 </details>
+
+The gradient boosting feature importances provide similar insight as the ridge regression model, however, the misalignment of features between the reports and rating model stand out more here.
+
+<p align="center">
+<img align="center" width="600" src="images/gbr_feature_importance.png">
+</p>
+
+The gradient boosting regression model error results are the following:
+
+| feature | baseline standard deviation | average root mean squared error |
+|---------|-----------------------------|---------------------------------|
+| reports | 204                         | 162                             |
+| rating  | 1.19                        | 1.10                            |
 
 ---
 
