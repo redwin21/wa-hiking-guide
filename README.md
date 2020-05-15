@@ -33,7 +33,7 @@ The following models, and overall study, are meant to provide insight into what 
     - <a href="https://github.com/redwin21/wa-hiking-guide#linear-regression-model">Linear Regression Model</a> 
     - <a href="https://github.com/redwin21/wa-hiking-guide#ridge-regression-model">Ridge Regression Model</a> 
     - <a href="https://github.com/redwin21/wa-hiking-guide#gradient-boosting-regression-model">Gradient Boosting Regression Model</a>  
-- <a href="https://github.com/redwin21/wa-hiking-guide#results">Results</a>  
+- <a href="https://github.com/redwin21/wa-hiking-guide#summary">Summary</a>  
 - <a href="https://github.com/redwin21/wa-hiking-guide#next-steps">Next Steps</a>  
 
 ---
@@ -255,7 +255,25 @@ The gradient boosting regression model error results are the following:
 
 ---
 
-## Results
+## Summary
+
+To draw some reasonable conclusions, we'll assume that come consistency between the models highlights the actual importance of features in determining the populatiry of a hike.
+
+To understand what people like and don't like about hikes, we can separate features into the ones that had a significant positive or negative impact on the models. This is done essentailly by eyeballing, in no particular order.
+
+| Positive Impacts            | Negative Impacts                |
+|-----------------------------|---------------------------------|
+| Waterfalls                  | drive time                      |
+| Good for Kids               | length                          |
+| Lakes                       | technical                       |
+| Wildflowers/Meadows         | pass: Sno-Parks Permit          |
+| Mountain Views              |                                 |
+| Summits                     |                                 |
+| pass: Northwest Forest Pass |                                 |
+
+In essence, people like to see pretty things on their hikes, but they don't like to drive very far or hike very long. The "Northwest Forest Pass" parking permit is required for all national forest lands, which indicates that hikes in those protected lands also tend to be more popular (or maybe just more abundant).
+
+The "technical" feature was unique in that it had a strong negative impact for "rating" but minimal impact for "reports". This could indicate that people don't have as much fun on hikes that are more challenging. The "Sno-Parks Permit" feature had a similar impact on "rating" and not on "reports". This pass is generally used for snowshoeing in winter.
 
 ---
 
@@ -270,5 +288,5 @@ With updates to the data and soem additional analysis, a next step for this proj
 ---
 
 <p align="center">
-<img align="center" width="600" src="images/falls.JPG">
+<img align="center" height="600" src="images/falls.JPG">
 </p>
