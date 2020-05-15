@@ -38,8 +38,6 @@ The following models, and overall study, are meant to provide insight into what 
 
 ---
 
-## Data Collection and Processing
-
 ## Hiking Data Collection and Cleaning
 
 The data for this project is collected from [Washington Trails Association](https://www.wta.org/) (WTA), a database for hikes and trip reports in Washington state.
@@ -137,7 +135,6 @@ In just two clusters, and with a little bit of domain knowledge, one can clearly
  All number of clusters for K-Means and factors for NMF provided similar results, where one category clearly identified techncial hiking, and the others were not distinguishable. Silhouette graphs of two different clusterings show this effect (with silhouette score being a measure of how appropriately grouped a data point is within a cluster). One cluster (the "technical" grouping) has a high positive score, meaning the data point is close to the center of the cluster, while all other clustered data points are negative. Five clusters for the second graph was arbitrarily chosen to highlight the affect.
 
 
-<summary> Silhouette Graphs </summary>
 <p align="center">
 <img align="center" width="500" src="images/text_cluster_silhouette.png">
 </p>
@@ -156,6 +153,13 @@ Here is a plot of hikes on a map of Washington by location, distinguished by whe
 ## Models
 
 Three models were considered in making predictions of reports and rating: an ordinary least squares linear regression, a ridge regression, and a gradient boosting regression.
+
+As a baseline point of comparison, the average and standard deviation for the reports and rating data was recorded. A model that has a "root mean squared error" that is lower than those listed here would be an imporvement in predictive capability.
+
+| feature | mean | standard deviation |
+|---------|------|--------------------|
+| reports | 111  | 204                |
+| rating  | 3.20 | 1.19               |
 
 ---
 
@@ -197,7 +201,7 @@ This model identifies that some features are more important than others via the 
 
 ---
 
-## Ridge Regression Model
+### Ridge Regression Model
 
 <details>
 <summary> Title </summary>
@@ -207,7 +211,7 @@ test
 
 ---
 
-## Gradient Boosting Regression Model
+### Gradient Boosting Regression Model
 
 <details>
 <summary> Title </summary>
