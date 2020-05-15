@@ -250,7 +250,7 @@ The gradient boosting regression model error results are the following:
 
 | feature | baseline standard deviation | average root mean squared error |
 |---------|-----------------------------|---------------------------------|
-| reports | 204                         | 162                             |
+| reports | 204                         | 158                             |
 | rating  | 1.19                        | 1.10                            |
 
 ---
