@@ -269,4 +269,6 @@ With updates to the data and soem additional analysis, a next step for this proj
 
 ---
 
-<img src='images/falls.JPG'>
+<p align="center">
+<img align="center" width="600" src="images/falls.JPG">
+</p>
