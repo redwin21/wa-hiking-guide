@@ -271,7 +271,7 @@ To understand what people like and don't like about hikes, we can separate featu
 | Summits                     |                                 |
 | pass: Northwest Forest Pass |                                 |
 
-In essence, people like to see pretty things on their hikes, but they don't like to drive very far or hike very long. The "Northwest Forest Pass" parking permit is required for all national forest lands, which indicates that hikes in those protected lands also tend to be more popular (or maybe just more abundant).
+In essence, people like to see pretty things and epic views on their hikes, but they don't like to drive very far or hike very long. The "Northwest Forest Pass" parking permit is required for all national forest lands, which indicates that hikes in those protected lands also tend to be more popular (or maybe just more abundant).
 
 The "technical" feature was unique in that it had a strong negative impact for "rating" but minimal impact for "reports". This could indicate that people don't have as much fun on hikes that are more challenging. The "Sno-Parks Permit" feature had a similar impact on "rating" and not on "reports". This pass is generally used for snowshoeing in winter.
 
@@ -288,5 +288,5 @@ With updates to the data and soem additional analysis, a next step for this proj
 ---
 
 <p align="center">
-<img align="center" height="600" src="images/falls.JPG">
+<img align="center" height="700" src="images/falls.JPG">
 </p>
