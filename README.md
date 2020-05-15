@@ -43,7 +43,7 @@ The following models, and overall study, are meant to provide insight into what 
 The data for this project is collected from [Washington Trails Association](https://www.wta.org/) (WTA), a database for hikes and trip reports in Washington state.
 
 <p align="center">
-<img align="center" width="600" src="images/wta.png">
+<img align="center" width="700" src="images/wta.png">
 </p>
 
 A dataset of all of the hikes on the website, as well as urls to those hikes, can be found in a [data.world](https://data.world/nick-hassell/washington-state-hiking-trails) database. This dataset provided a prelimiary set of data, as well as an easy way to access all of the hike web pages.
