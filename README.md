@@ -259,7 +259,7 @@ The gradient boosting regression model error results are the following:
 
 To draw some reasonable conclusions, we'll assume that come consistency between the models highlights the actual importance of features in determining the populatiry of a hike.
 
-To understand what people like and don't like about hikes, we can separate features into the ones that had a significant positive or negative impact on the models. This is done essentailly by eyeballing, in no particular order.
+To understand what people like and don't like about hikes, we can separate features into the ones that had a significant positive or negative impact on the models. This is done essentailly by eyeballing, in close to descending order of importance.
 
 | Positive Impacts            | Negative Impacts                |
 |-----------------------------|---------------------------------|
@@ -271,7 +271,7 @@ To understand what people like and don't like about hikes, we can separate featu
 | Summits                     |                                 |
 | pass: Northwest Forest Pass |                                 |
 
-In essence, people like to see pretty things and epic views on their hikes, but they don't like to drive very far or hike very long. The "Northwest Forest Pass" parking permit is required for all national forest lands, which indicates that hikes in those protected lands also tend to be more popular (or maybe just more abundant).
+In essence, people like to see pretty things and epic views on their hikes, but they don't like to drive very far or hike very long. A kid-friendly hike is important, and waterfalls are the jackpot. The "Northwest Forest Pass" parking permit is required for all national forest lands, which indicates that hikes in those protected lands also tend to be more popular (or maybe just more abundant).
 
 The "technical" feature was unique in that it had a strong negative impact for "rating" but minimal impact for "reports". This could indicate that people don't have as much fun on hikes that are more challenging. The "Sno-Parks Permit" feature had a similar impact on "rating" and not on "reports". This pass is generally used for snowshoeing in winter.
 
