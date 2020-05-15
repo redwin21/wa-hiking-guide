@@ -2,6 +2,10 @@
 
 The data for this project is collected from [Washington Trails Association](https://www.wta.org/) (WTA), a database for hikes and trip reports in Washington state.
 
+<p align="center">
+<img align="center" width="600" src="../images/wta.png">
+</p>
+
 A dataset of all of the hikes on the website, as well as urls to those hikes, can be found in a [data.world](https://data.world/nick-hassell/washington-state-hiking-trails) database. This dataset provided a prelimiary set of data, as well as an easy way to access all of the hike web pages.
 
 All of the data is being hidden in this folder via the `.gitignore` file to avoid uploading copious amounts of unecessary data to GitHub. Anyone looking for this data can follow the same steps to collect it.
