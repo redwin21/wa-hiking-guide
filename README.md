@@ -257,7 +257,7 @@ The gradient boosting regression model error results are the following:
 
 ## Summary
 
-To draw some reasonable conclusions, we'll assume that come consistency between the models highlights the actual importance of features in determining the populatiry of a hike.
+To draw some reasonable conclusions, we'll assume that consistency between the models highlights the actual importance of features in determining the populatiry of a hike.
 
 To understand what people like and don't like about hikes, we can separate features into the ones that had a significant positive or negative impact on the models. This is done essentailly by eyeballing, in close to descending order of importance.
 
