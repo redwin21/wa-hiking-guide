@@ -15,7 +15,7 @@
 
 ---
 
-Seattlites pride themselves on their outdoor excursions. You'd be hard-pressed to find someone who didn't enjoy hiking. Washington Trails Association provides a [website](wta.org) for people to find information on hikes and discover new ones.
+Seattleites pride themselves on their outdoor excursions. You'd be hard-pressed to find someone who didn't enjoy hiking. Washington Trails Association provides a [website](wta.org) for people to find information on hikes and discover new ones.
 
 With the hiking community so large in the Pacific Northwest, there's a strong market for outdoor sports gear. Imagine being a gear retailer, trying to find out how to target new customers, update products and create new ones.
 
